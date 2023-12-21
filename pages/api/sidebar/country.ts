@@ -52,7 +52,7 @@ async function processFilters(filters: Filter[], lang: string) {
   const groupedFilters = groupFiltersByVariable(filters);
   let countries: any[] = [];
   /*  */
-  let dataList = {};
+  let dataList: { [key: string]: any } = {};
   /*  */
   await Promise.all(
     Object.entries(groupedFilters).map(async ([key, group]) => {
@@ -179,7 +179,7 @@ export default async function handler(
 
     const { body, query } = req;
     const { filters } = body;
-    const lang: string = query.lang || "es";
+    const lang: string = (query.lang || "es") as string;
 
     const countries = await processFilters(filters, lang);
 

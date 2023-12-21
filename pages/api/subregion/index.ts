@@ -7,7 +7,7 @@ interface SubRegionResponse {
   id: string;
   name: string;
   lang: string;
-  countries: Country[];
+  countries: any[];
 }
 
 export default async function handler(

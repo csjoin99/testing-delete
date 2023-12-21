@@ -13,23 +13,19 @@ interface VariableDataInfo {
 }
 
 async function getDescription(lang: string, iso: string) {
-  const country = await Country.findOne({ lang, iso }, "id name description")
-    .lean()
-    .exec();
+  const country = await Country.findOne({ lang, iso }, "id name description");
 
   const variableData = await VariableData.find({ lang, country: country._id });
 
   const sources = Array.from(
-    new Set(variableData.flatMap((data) => data.sources))
+    new Set(variableData.flatMap((data: any) => data.sources))
   );
 
-  return { ...country, sources };
+  return { ...country.toObject(), sources };
 }
 
 async function getClassification(lang: string, iso: string) {
-  const country = await Country.findOne({ lang, iso }, "id name description")
-    .lean()
-    .exec();
+  const country = await Country.findOne({ lang, iso }, "id name description");
 
   const criterions = await Criterion.find({ lang })
     .populate({
@@ -45,9 +41,9 @@ async function getClassification(lang: string, iso: string) {
     .exec();
 
   const formattedData = await Promise.all(
-    criterions.map(async (criterion) => {
+    criterions.map(async (criterion: any) => {
       const themeData = await Promise.all(
-        criterion.themes.map(async (theme) => {
+        criterion.themes.map(async (theme: any) => {
           const variableDataPromises = theme.variables.map(
             async (variable: any) => {
               const variableDataTypes = await Promise.all(
@@ -84,9 +80,7 @@ async function getClassification(lang: string, iso: string) {
 }
 
 async function getVariables(lang: string, iso: string) {
-  const country = await Country.findOne({ lang, iso }, "id name description")
-    .lean()
-    .exec();
+  const country = await Country.findOne({ lang, iso }, "id name description");
 
   const variables = await Variable.find({ lang })
     .select("id name")
@@ -94,16 +88,15 @@ async function getVariables(lang: string, iso: string) {
       path: "variableData",
       match: { country: country._id, lang },
       select: "id main_source sources article last_update",
-    })
-    .lean();
+    });
 
   const filteredVariables = variables.filter(
-    (variable) => variable.variableData.length > 0
+    (variable: any) => variable.variableData.length > 0
   );
 
-  variables.forEach((variable) => {
+  variables.forEach((variable: any) => {
     if (variable.variableData) {
-      variable.variableData = variable.variableData.map((data) => ({
+      variable.variableData = variable.variableData.map((data: any) => ({
         id: data.id,
         source: data.main_source,
         web: data.sources,
@@ -123,16 +116,16 @@ export default async function handler(
   await connectDb();
 
   try {
-    const lang = req.query.lang || "es";
-    const { country: iso, tab } = req.query;
+    const lang = (req.query.lang || "es") as string;
+    const { country: iso = "", tab } = req.query;
     let response = null;
 
     if (tab === "description") {
-      response = await getDescription(lang, iso);
+      response = await getDescription(lang, iso as string);
     } else if (tab === "classification") {
-      response = await getClassification(lang, iso);
+      response = await getClassification(lang, iso as string);
     } else if (tab === "variable") {
-      response = await getVariables(lang, iso);
+      response = await getVariables(lang, iso as string);
     }
 
     return res.status(200).json({ response });

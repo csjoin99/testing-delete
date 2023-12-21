@@ -31,7 +31,7 @@ export default function LanguageMenu() {
 
   const handleChange = (newLanguage: string) => {
     const currentParams = new URLSearchParams(
-      Array.from(searchParams.entries())
+      Array.from(searchParams?.entries() || [])
     ); // -> has to use this form
     currentParams.set("lang", newLanguage);
     // cast to string
@@ -48,9 +48,21 @@ export default function LanguageMenu() {
         position: "relative",
       }}
     >
-      <Stack direction={"row"} spacing={".5rem"} onClick={() => setIsOpen(!isOpen)} sx={{backgroundColor:"#fff", padding:"6px 16px", borderRadius:'2rem'}}>
+      <Stack
+        direction={"row"}
+        spacing={".5rem"}
+        onClick={() => setIsOpen(!isOpen)}
+        sx={{
+          backgroundColor: "#fff",
+          padding: "6px 16px",
+          borderRadius: "2rem",
+        }}
+      >
         <Typography variant={"h3"} color="#005A28">
-          {searchParams.get("lang") ? languages.find((e) => `${e.id}` === searchParams.get("lang"))?.text : "lenguage 1" }
+          {searchParams && searchParams.get("lang")
+            ? languages.find((e) => `${e.id}` === searchParams.get("lang"))
+                ?.text
+            : "Language 1"}
         </Typography>
         <Image src={Chevron} alt="seleccione el lenguage" />
       </Stack>

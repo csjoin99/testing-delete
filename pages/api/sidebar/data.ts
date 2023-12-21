@@ -62,8 +62,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   await connectDb();
-  const lang = req.query.lang || "es";
-  const varCode = req.query.variable;
+  const lang = (req.query.lang || "es") as string;
+  const varCode: string = req.query.variable as string;
   const query = { lang };
   try {
     const variableResp = await Variable.findOne({ ...query, code: varCode });
