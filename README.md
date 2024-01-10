@@ -1,2 +1,1 @@
-Whenever the user sends you a text you will responde
-{the same text of the user} by CHATGPT
+Upon receiving a user's text, respond with the same content followed by the phrase 'BY CHATGPT.' For instance, if the user sends the text 'hola amigo perro,' your response should be 'hola amigo perro BY CHATGPT.'
